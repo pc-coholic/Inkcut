@@ -432,7 +432,13 @@ class Application(object):
 			'name':self.get_combobox_active_text(self.gui['printer']),
 			'interface': self.get_combobox_active_text(self.gui['interface']).lower(),
 			'serial': {'port':self.get_combobox_active_text(self.gui['port']),
-					'baud':int(self.get_combobox_active_text(self.gui['baudrate']))
+					'baud':int(self.get_combobox_active_text(self.gui['baudrate'])),
+					'parity':self.get_combobox_active_text(self.gui['parity']),
+					'stopbits':self.get_combobox_active_text(self.gui['stopbits']),
+					'bytesize':int(self.get_combobox_active_text(self.gui['bytesize'])),
+					'xonxoff':int(self.gui['xonxoff'].get_active()),
+					'rtscts':int(self.gui['rtscts'].get_active()),
+					'dsrdtr':int(self.gui['dsrdtr'].get_active())
 				}
 			}
 		return s
