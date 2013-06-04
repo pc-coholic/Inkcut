@@ -30,14 +30,15 @@ import os
 class Device:
 	def __init__(self,config={}):
 		#self.xml = etree.parse(filename).getroot()
-		conf = {'width':0,'length':0,'name':'','interface':'serial','serial':{'port':'/dev/ttyUSB0','baud':9600}}
+		conf = {'width':0,'length':0,'name':'','interface':'serial','serial':{'port':'/dev/ttyUSB0','baud':9600,
+				'parity':'None', 'stopbits':1, 'bytesize':8, 'xonxoff':False, 'rtscts':False, 'dsrdtr':False}}
 		conf.update(config)
 		self.width = conf['width']
 		self.length = conf['length']
 		self.name = conf['name']
 		self.interface = conf['interface']
 		self.serial = conf['serial']
-		
+
 	
 	def getPrinters(self):
 		con = cups.Connection()
@@ -72,6 +73,12 @@ class Device:
 			ser = serial.Serial()
 			ser.baudrate = set['baud']
 			ser.port = set['port']
+			ser.parity = self.getpyserialreplacements(set['parity'])
+			ser.stopbits = self.getpyserialreplacements(set['stopbits'])
+			ser.bytesize = self.getpyserialreplacements(set['bytesize'])
+			ser.xonxoff = set['xonxoff']
+			ser.rtscts = set['rtscts']
+			ser.dsrdtr = set['dsrdtr']
 			ser.open()
 			if ser.isOpen():
 				#send data & return bits sent
@@ -99,6 +106,18 @@ class Device:
 		else:
 			raise AssertionError('Invalid interface type, only printers and serial connections are supported.')
 		
-
-	
-
+	def getpyserialreplacements(self, value):
+		return {
+			'None':		serial.PARITY_NONE,
+			'Even':		serial.PARITY_EVEN,
+			'Odd':		serial.PARITY_ODD,
+			'Mark':		serial.PARITY_MARK,
+			'Space':	serial.PARITY_SPACE,
+			'1':			serial.STOPBITS_ONE,
+			'1.5':		serial.STOPBITS_ONE_POINT_FIVE,
+			'2':			serial.STOPBITS_TWO,
+			'5':			serial.FIVEBITS,
+			'6':			serial.SIXBITS,
+			'7':			serial.SEVENBITS,
+			'8':			serial.EIGHTBITS,
+        }.get(value, value)
